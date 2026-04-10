@@ -17,7 +17,9 @@ bool TextBuffer::forward(){
         column = 0;
         row++;
     }
-    column++;
+    else{
+        column++;
+    }
     index++;
     cursor++;
 
@@ -102,27 +104,28 @@ bool TextBuffer::up(){
         return false;
     }
 
-    int prevCol = column;
+    int col = column;
     move_to_row_start();
-    move_to_row_end();
-    move_to_column(prevCol);
+    backward();
+    move_to_column(col);
 
     return true;
 }
 
 // Down
 bool TextBuffer::down(){
-    int prevCol = column;
+    int col = column;
     move_to_row_end();
 
     if (is_at_end()){
-        move_to_column(prevCol);
+        move_to_column(col);
         return false;
     }
 
     forward();
-    move_to_column(prevCol); 
+    move_to_column(col); 
     return true;
+
 }
 
 // Is at end
@@ -161,3 +164,16 @@ std::string TextBuffer::stringify() const{
 }
 
 // Compute column
+int TextBuffer::compute_column() const{
+    int column = 0;
+    CharList::const_iterator i = cursor;
+
+    while (i != data.begin()){
+        i--;
+        if (*i == '\n'){
+            break;
+        }
+        column++;
+    }
+    return column;
+}
